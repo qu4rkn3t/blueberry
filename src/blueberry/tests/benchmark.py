@@ -32,10 +32,6 @@ async def performance_profile(
                 "tokens_per_second": float,
             }
         }
-
-    Example:
-        >>> profile = await performance_profile(provider, "Count to 100")
-        >>> print(f"Latency: {profile['summary']['avg_latency_ms']:.2f}ms")
     """
     latency = await measure_latency(
         provider, prompt, max_tokens=max_tokens, runs=runs, **kwargs
@@ -80,12 +76,6 @@ async def benchmark_suite(
             },
             ...
         }
-
-    Example:
-        >>> suite = await benchmark_suite(provider, {
-        ...     "short": "Hello",
-        ...     "long": "Explain quantum computing in detail"
-        ... })
     """
     # Convert list to dict if needed
     if isinstance(prompts, list):

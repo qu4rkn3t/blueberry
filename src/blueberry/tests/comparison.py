@@ -38,15 +38,6 @@ async def compare_models(
             },
             ...
         }
-
-    Example:
-        >>> providers = {
-        ...     "pro": GeminiProvider(model="gemini-1.5-pro", ...),
-        ...     "flash": GeminiProvider(model="gemini-1.5-flash", ...)
-        ... }
-        >>> results = await compare_models(providers, "Explain AI")
-        >>> for name, result in results.items():
-        ...     print(f"{name}: {result['summary']['avg_latency_ms']:.2f}ms")
     """
     # Convert list to dict if needed
     if isinstance(providers, list):

@@ -33,10 +33,6 @@ async def context_capacity(
             "utilization_rate": float (0-100),
             "wasted_context": int
         }
-
-    Example:
-        >>> capacity = await context_capacity(provider)
-        >>> print(f"Can use {capacity['utilization_rate']:.1f}% of context")
     """
     metadata = provider.get_metadata()
     theoretical = metadata.context_window or 0
@@ -87,13 +83,6 @@ async def prompt_stress_test(
                 "cost_increase": float (0-100)
             }
         }
-
-    Example:
-        >>> stress = await prompt_stress_test(
-        ...     provider,
-        ...     "Summarize: ",
-        ...     context_percentages=[0.1, 0.5, 0.9]
-        ... )
     """
     if context_percentages is None:
         context_percentages = [0.1, 0.5, 0.9]

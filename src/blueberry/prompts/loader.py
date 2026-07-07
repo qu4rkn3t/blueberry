@@ -12,12 +12,6 @@ def load_prompt(source: str | Path) -> str:
 
     Returns:
         The prompt text
-
-    Examples:
-        >>> load_prompt("Hello world")
-        'Hello world'
-        >>> load_prompt("prompts/test.txt")  # Loads from file
-        '... file contents ...'
     """
     source_str = str(source)
 

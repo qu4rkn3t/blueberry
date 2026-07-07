@@ -34,13 +34,6 @@ async def cost_analysis(
                 "most_expensive_actual": float,
             }
         }
-
-    Example:
-        >>> analysis = await cost_analysis(
-        ...     provider,
-        ...     "Explain machine learning",
-        ...     output_sizes=[100, 500]
-        ... )
     """
     if output_sizes is None:
         output_sizes = [100, 500, 1000]
@@ -104,10 +97,6 @@ async def cost_efficiency(
                 "tokens_per_dollar": float,
             }
         }
-
-    Example:
-        >>> eff = await cost_efficiency(provider, "Hello world")
-        >>> print(f"Cost per ms: ${eff['efficiency']['cost_per_ms']:.8f}")
     """
     latency = await measure_latency(
         provider, prompt, max_tokens=max_tokens, runs=runs, **kwargs

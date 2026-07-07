@@ -32,11 +32,6 @@ async def streaming_performance(
                 "tokens_per_second": float,
             }
         }
-
-    Example:
-        >>> perf = await streaming_performance(provider, "Write a story")
-        >>> print(f"TTFT: {perf['summary']['ttft_ms']:.2f}ms")
-        >>> print(f"Throughput: {perf['summary']['tokens_per_second']:.2f} tok/s")
     """
     ttft = await measure_ttft(provider, prompt, max_tokens=max_tokens, **kwargs)
     throughput = await measure_throughput(
