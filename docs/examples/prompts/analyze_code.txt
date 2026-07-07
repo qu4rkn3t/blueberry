@@ -1,0 +1,8 @@
+Analyze the following code structure and provide insights on:
+1. Architecture patterns used
+2. Potential performance bottlenecks
+3. Code quality and maintainability
+4. Security considerations
+5. Suggestions for improvement
+
+Focus on providing actionable feedback that can be implemented immediately.

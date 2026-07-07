@@ -216,3 +216,10 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Ember specific
+results/
+*.log
+
+# User configuration (contains API keys, model configs)
+ember_config.yaml

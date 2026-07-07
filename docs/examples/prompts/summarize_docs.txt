@@ -1,0 +1,7 @@
+Create a concise summary of the provided documentation that includes:
+- Main purpose and use cases
+- Key features and capabilities
+- Quick start instructions
+- Important limitations or considerations
+
+Keep the summary under 500 words and structure it with clear sections.
