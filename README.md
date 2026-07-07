@@ -10,7 +10,11 @@ Blueberry measures latency, cost, throughput, and quality through atomic functio
 pip install -e .
 ```
 
-Python 3.10+. Dependencies: `pydantic`, `openai`, `pyyaml`. Prompt optimization requires `pip install -e ".[optimizers]"` (`httpx`).
+Python 3.10+. Dependencies: `pydantic`, `openai`, `pyyaml`.
+
+Optional dependencies:
+- Prompt optimization: `pip install -e ".[optimizers]"` (adds `httpx`)
+- Accurate tokenization: `pip install tiktoken` (OpenAI models), `pip install google-genai` (Gemini models)
 
 ## Quick start
 
@@ -36,7 +40,7 @@ Atomic functions are async and return dicts.
 
 ## Configuration
 
-Model metadata (base URLs, pricing, context windows) is defined in YAML. No values are hardcoded.
+Model metadata (base URLs, pricing, context windows, rate limits) is defined in YAML. No values are hardcoded.
 
 ```yaml
 # blueberry_config.yaml
@@ -50,6 +54,18 @@ providers:
         context_window: 1048576
         input_cost_per_million: 0.075
         output_cost_per_million: 0.30
+        rate_limits:
+          requests_per_minute: 15
+          tokens_per_minute: 1000000
+        batch:
+          supports_batch: true
+          max_batch_size: 1000
+          batch_input_cost_multiplier: 0.5
+
+optimizers:
+  headroom:
+    endpoint: https://api.headroom.dev/v1/optimize
+    api_key: ${HEADROOM_API_KEY}
 ```
 
 ```python
@@ -100,7 +116,7 @@ Subclass `Test`, implement `run()`, return `TestResult`. The `execute()` method 
 
 ### Prompts (`blueberry.prompts`)
 
-`load_prompt` loads from a file or returns the input string. `optimize_prompt` compresses prompts via Headroom (`httpx` required).
+`load_prompt` loads from a file or returns the input string. `optimize_prompt` compresses prompts via Headroom (`httpx` required). Configure Headroom endpoint in YAML or pass directly.
 
 ## Providers
 

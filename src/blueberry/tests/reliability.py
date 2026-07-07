@@ -35,11 +35,6 @@ async def error_rate(
             "success_rate": float (0-100),
             "errors": list of error messages
         }
-
-    Example:
-        >>> result = await error_rate(provider, "Hello", attempts=50)
-        >>> print(f"Success rate: {result['success_rate']:.1f}%")
-        >>> print(f"Errors: {len(result['errors'])}")
     """
     successful = 0
     failed = 0

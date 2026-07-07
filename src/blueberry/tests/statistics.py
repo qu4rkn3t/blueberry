@@ -37,11 +37,6 @@ async def latency_percentiles(
             "max": maximum latency (ms),
             "runs": number of runs
         }
-
-    Example:
-        >>> result = await latency_percentiles(provider, "Hello", runs=200)
-        >>> print(f"P95: {result['p95']:.2f}ms")
-        >>> print(f"P99: {result['p99']:.2f}ms")
     """
     if percentiles is None:
         percentiles = [50, 95, 99, 99.9]
@@ -125,16 +120,6 @@ async def statistical_comparison(
             "p_value": float (approximation),
             "confidence": confidence level (1 - alpha)
         }
-
-    Example:
-        >>> result = await statistical_comparison(
-        ...     gemini_pro, gemini_flash,
-        ...     "Explain AI",
-        ...     runs=50
-        ... )
-        >>> if result['statistically_significant']:
-        ...     print(f"{result['faster_provider']} is significantly faster")
-        >>> print(f"Confidence: {result['confidence']*100:.0f}%")
     """
 
     async def measure_provider(provider: Provider) -> list[float]:

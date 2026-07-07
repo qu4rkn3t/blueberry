@@ -5,12 +5,19 @@ from collections.abc import AsyncIterator
 from openai import AsyncOpenAI
 
 from blueberry.core.provider import (
+    BatchCapabilities,
     CompletionChunk,
     CompletionRequest,
     CompletionResponse,
+    EmbeddingResponse,
     ModelMetadata,
+    RateLimitInfo,
 )
-from blueberry.providers._helpers import estimate_tokens
+from blueberry.providers._helpers import (
+    count_tokens_with_tiktoken,
+    estimate_tokens,
+    get_tiktoken_tokenizer,
+)
 
 
 class OpenAISpec:
@@ -97,14 +104,127 @@ class OpenAISpec:
 
     def count_tokens(self, text: str) -> int:
         """
-        Count tokens. Uses estimation by default.
+        Count tokens using tiktoken if available, otherwise estimate.
         Override in model implementations with provider-specific tokenizers.
         """
+        # Try tiktoken first
+        token_count = count_tokens_with_tiktoken(text, self.model)
+        if token_count is not None:
+            return token_count
+
+        # Fall back to estimation
         return estimate_tokens(text)
 
     def get_metadata(self) -> ModelMetadata:
         """Get model metadata."""
         return self._metadata
+
+    def get_rate_limits(self) -> RateLimitInfo:
+        """
+        Get rate limit information.
+
+        Override in model implementations with provider-specific limits.
+        """
+        return RateLimitInfo()
+
+    def get_batch_capabilities(self) -> BatchCapabilities:
+        """
+        Get batch processing capabilities.
+
+        Override in model implementations that support batching.
+        """
+        return BatchCapabilities()
+
+    def encode(self, text: str) -> list[int]:
+        """
+        Encode text to token IDs using tiktoken.
+
+        Falls back to empty list if tiktoken unavailable.
+        """
+        tokenizer = get_tiktoken_tokenizer(self.model)
+        if tokenizer:
+            return tokenizer.encode(text)
+        return []
+
+    def decode(self, tokens: list[int]) -> str:
+        """
+        Decode token IDs to text using tiktoken.
+
+        Falls back to empty string if tiktoken unavailable.
+        """
+        tokenizer = get_tiktoken_tokenizer(self.model)
+        if tokenizer:
+            return tokenizer.decode(tokens)
+        return ""
+
+    async def embed(self, text: str) -> EmbeddingResponse:
+        """
+        Generate embeddings using OpenAI embeddings API.
+
+        Only works if model supports embeddings (text-embedding-* models).
+        """
+        if not self.model.startswith("text-embedding-"):
+            raise NotImplementedError(
+                f"Model {self.model} does not support embeddings"
+            )
+
+        response = await self._client.embeddings.create(model=self.model, input=text)
+
+        embedding_data = response.data[0]
+        return EmbeddingResponse(
+            embedding=embedding_data.embedding,
+            model=response.model,
+            dimensions=len(embedding_data.embedding),
+        )
+
+    def validate_request(self, request: CompletionRequest) -> dict[str, Any]:
+        """
+        Validate completion request against model constraints.
+
+        Checks token limits, parameter ranges, etc.
+        """
+        errors = []
+        warnings = []
+
+        # Count tokens
+        token_count = self.count_tokens(request.prompt)
+
+        # Check context window
+        metadata = self.get_metadata()
+        if metadata.context_window and token_count > metadata.context_window:
+            errors.append(
+                f"Prompt has {token_count} tokens, exceeds context window of {metadata.context_window}"
+            )
+
+        # Check max_tokens
+        if request.max_tokens:
+            if metadata.max_output_tokens and request.max_tokens > metadata.max_output_tokens:
+                errors.append(
+                    f"max_tokens {request.max_tokens} exceeds model limit of {metadata.max_output_tokens}"
+                )
+
+            # Warn if total might exceed context
+            if metadata.context_window:
+                total = token_count + request.max_tokens
+                if total > metadata.context_window:
+                    warnings.append(
+                        f"Prompt ({token_count}) + max_tokens ({request.max_tokens}) = {total} may exceed context window ({metadata.context_window})"
+                    )
+
+        # Check temperature
+        if not 0 <= request.temperature <= 2:
+            warnings.append(f"temperature {request.temperature} outside typical range [0, 2]")
+
+        # Check top_p
+        if not 0 <= request.top_p <= 1:
+            errors.append(f"top_p {request.top_p} must be between 0 and 1")
+
+        return {
+            "valid": len(errors) == 0,
+            "errors": errors,
+            "warnings": warnings,
+            "token_count": token_count,
+        }
 
     async def close(self) -> None:
         """Cleanup resources."""

@@ -31,14 +31,6 @@ async def quality_check(
             "instruction_following": {...} or None,
             "quality_score": float (0-100)
         }
-
-    Example:
-        >>> check = await quality_check(
-        ...     provider,
-        ...     "Say only 'SUCCESS'",
-        ...     expected_keyword="SUCCESS"
-        ... )
-        >>> print(f"Quality: {check['quality_score']:.1f}%")
     """
     consistency = await check_consistency(
         provider, prompt, max_tokens=max_tokens, runs=consistency_runs, **kwargs
@@ -91,10 +83,6 @@ async def reliability_score(
                 "score": float (0-100)
             }
         }
-
-    Example:
-        >>> rel = await reliability_score(provider, "What is 2+2?")
-        >>> print(f"Reliability: {rel['reliability']['score']:.1f}%")
     """
     consistency = await check_consistency(
         provider, prompt, max_tokens=max_tokens, runs=runs, **kwargs
