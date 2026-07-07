@@ -1,4 +1,4 @@
-# Blueberry 🫐
+# blueberry 🫐
 
 Composable primitives for LLM performance testing.
 
