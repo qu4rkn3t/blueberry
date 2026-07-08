@@ -15,10 +15,8 @@ def load_prompt(source: str | Path) -> str:
     """
     source_str = str(source)
 
-    # Check if it looks like a file path
     path = Path(source_str)
     if path.exists() and path.is_file():
         return path.read_text(encoding="utf-8")
 
-    # Otherwise treat as direct prompt
     return source_str

@@ -1,6 +1,5 @@
 """Blueberry - Composable LLM performance testing."""
 
-# Core provider abstraction
 from blueberry.core.provider import (
     BatchCapabilities,
     CompletionRequest,
@@ -10,11 +9,7 @@ from blueberry.core.provider import (
     Provider,
     RateLimitInfo,
 )
-
-# Providers
 from blueberry.providers import GeminiProvider, OpenAISpec
-
-# Test framework for user-defined tests
 from blueberry.test import ComposedTest, Test, TestResult
 
 __version__ = "0.1.1"

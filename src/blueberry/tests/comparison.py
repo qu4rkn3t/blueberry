@@ -39,7 +39,7 @@ async def compare_models(
             ...
         }
     """
-    # Convert list to dict if needed
+
     if isinstance(providers, list):
         provider_dict = {}
         for provider in providers:
@@ -66,11 +66,11 @@ async def compare_models(
                 provider, prompt, max_tokens=max_tokens, **kwargs
             )
             result["cost"] = cost
-            result["summary"]["cost_usd"] = cost["cost_usd"]
+            if cost["cost_usd"] is not None:
+                result["summary"]["cost_usd"] = cost["cost_usd"]
 
         return name, result
 
-    # Test all models concurrently
     results_list = await asyncio.gather(
         *[test_provider(name, provider) for name, provider in provider_dict.items()]
     )

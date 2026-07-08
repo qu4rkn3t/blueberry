@@ -12,7 +12,7 @@ class ComprehensiveTest(Test):
     """Test that measures latency, throughput, and cost."""
 
     async def run(self, provider, prompt):
-        # Measure multiple metrics
+
         latency = await measure_latency(provider, prompt, runs=3)
         throughput = await measure_throughput(provider, prompt, runs=2)
         cost = await calculate_cost(provider, prompt, max_tokens=200)
@@ -31,11 +31,11 @@ async def main():
         api_key="your-api-key",
     )
 
-    # Load and optionally optimize prompt
-    prompt = load_prompt("prompts/analyze_code.txt")
-    # prompt = optimize_prompt(prompt, optimizer="headroom", api_key="...")
 
-    # Run structured test
+    prompt = load_prompt("prompts/analyze_code.txt")
+
+
+
     test = ComprehensiveTest()
     result = await test.execute(provider, prompt)
 

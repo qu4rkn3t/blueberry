@@ -13,6 +13,7 @@ def _get_gemini_tokenizer(model: str):
     """
     try:
         from google import genai
+
         client = genai.Client()
         return client, model
     except ImportError:
@@ -60,7 +61,6 @@ class GeminiProvider(OpenAISpec):
         config_field_names = set(ModelConfig.model_fields.keys())
         extra_kwargs = {k: v for k, v in kwargs.items() if k not in config_field_names}
 
-        # Extract rate limits and batch config
         rate_limits = None
         if model_config.rate_limits:
             rate_limits = model_config.rate_limits.model_dump()
@@ -114,10 +114,8 @@ class GeminiProvider(OpenAISpec):
                 result = client.models.count_tokens(model=model, contents=text)
                 return result.total_tokens
             except Exception:
-                # Fall back to estimation if tokenization fails
                 pass
 
-        # Fallback to parent class estimation
         return super().count_tokens(text)
 
     def get_rate_limits(self) -> RateLimitInfo:

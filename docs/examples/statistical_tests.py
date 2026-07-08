@@ -7,15 +7,15 @@ from blueberry.tests import latency_percentiles, statistical_comparison
 
 
 async def main():
-    # Setup providers
-    api_key = "your-api-key"  # Or use os.getenv("GEMINI_API_KEY")
+
+    api_key = "your-api-key"
 
     pro = GeminiProvider(model="gemini-1.5-pro", api_key=api_key)
     flash = GeminiProvider(model="gemini-1.5-flash", api_key=api_key)
 
     prompt = "Explain quantum computing in one sentence"
 
-    # 1. Latency percentiles - production-grade metrics
+
     print("Testing Flash model percentiles...")
     percentiles = await latency_percentiles(flash, prompt, runs=100)
 
@@ -26,14 +26,14 @@ async def main():
     print(f"  P99.9:        {percentiles['p999']:.2f}ms")
     print(f"  Mean:         {percentiles['mean']:.2f}ms")
 
-    # 2. Statistical comparison - is Pro significantly faster?
+
     print("\n\nComparing Pro vs Flash with statistical significance...")
     comparison = await statistical_comparison(
         pro,
         flash,
         prompt,
-        runs=50,  # Recommend 30+ for statistical validity
-        alpha=0.05,  # 95% confidence
+        runs=50,
+        alpha=0.05,
     )
 
     print("\nStatistical Comparison (50 runs each):")

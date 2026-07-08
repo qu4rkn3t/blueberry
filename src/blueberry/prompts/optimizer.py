@@ -26,7 +26,6 @@ def optimize_prompt(
     Returns:
         Optimized prompt
     """
-    # Load from config if provided
     if config_path:
         from blueberry.config import get_optimizer_config, load_config
 

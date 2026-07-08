@@ -42,10 +42,8 @@ async def cost_analysis(
     costs_by_size = {}
 
     for size in output_sizes:
-        # Estimate
         estimated = estimate_cost(provider, prompt, size)
 
-        # Actual
         actual_result = await calculate_cost(
             provider, prompt, max_tokens=size, **kwargs
         )
@@ -106,14 +104,15 @@ async def cost_efficiency(
     cost_usd = cost["cost_usd"] or 0
     latency_ms = latency["mean_ms"]
 
+    total_tokens = cost["total_tokens"]
     return {
         "latency_ms": latency_ms,
         "cost_usd": cost_usd,
-        "total_tokens": cost["total_tokens"],
+        "total_tokens": total_tokens,
         "efficiency": {
             "cost_per_ms": cost_usd / latency_ms if latency_ms > 0 else 0,
             "ms_per_dollar": latency_ms / cost_usd if cost_usd > 0 else float("inf"),
-            "tokens_per_dollar": cost["total_tokens"] / cost_usd
+            "tokens_per_dollar": total_tokens / cost_usd
             if cost_usd > 0
             else float("inf"),
         },

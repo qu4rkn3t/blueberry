@@ -22,7 +22,7 @@ async def test_model(provider, name, prompt):
 async def main():
     prompt = "Explain quantum computing in simple terms"
 
-    # Create providers
+
     providers = [
         (
             GeminiProvider(model="gemini-1.5-pro", api_key="your-key"),
@@ -34,19 +34,19 @@ async def main():
         ),
     ]
 
-    # Test all models
+
     results = await asyncio.gather(
         *[test_model(provider, name, prompt) for provider, name in providers]
     )
 
-    # Display comparison
+
     print("\nModel Comparison:")
     print("-" * 60)
     for result in results:
         print(f"{result['model']:15} | {result['latency_ms']:8.2f}ms | "
               f"${result['cost_usd']:.6f} | {result['tokens']} tokens")
 
-    # Cleanup
+
     for provider, _ in providers:
         await provider.close()
 

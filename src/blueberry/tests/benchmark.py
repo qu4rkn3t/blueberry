@@ -77,7 +77,7 @@ async def benchmark_suite(
             ...
         }
     """
-    # Convert list to dict if needed
+
     if isinstance(prompts, list):
         prompts = {f"prompt_{i}": p for i, p in enumerate(prompts)}
 

@@ -94,7 +94,6 @@ async def prompt_stress_test(
     filler = "Lorem ipsum dolor sit amet. "
 
     for pct in context_percentages:
-        # Fill context to target percentage
         target_tokens = int(context_limit * pct)
         test_prompt = prompt
 
@@ -103,7 +102,6 @@ async def prompt_stress_test(
             test_prompt += filler
             current = count_tokens(provider, test_prompt)
 
-        # Test performance at this utilization
         throughput = await measure_throughput(
             provider, test_prompt, max_tokens=max_tokens, **kwargs
         )
@@ -118,26 +116,29 @@ async def prompt_stress_test(
             "cost": cost,
         }
 
-    # Calculate degradation from lowest to highest utilization
     sorted_utils = sorted(context_percentages)
+    degradation = None
     if len(sorted_utils) >= 2:
         low = int(sorted_utils[0] * 100)
         high = int(sorted_utils[-1] * 100)
 
-        low_tps = results[low]["throughput"]["tokens_per_second"]
-        high_tps = results[high]["throughput"]["tokens_per_second"]
-        throughput_drop = ((low_tps - high_tps) / low_tps * 100) if low_tps > 0 else 0
+        low_result = results[low]
+        high_result = results[high]
 
-        low_cost = results[low]["cost"]["cost_usd"] or 0
-        high_cost = results[high]["cost"]["cost_usd"] or 0
+        low_tps = low_result["throughput"]["tokens_per_second"]
+        high_tps = high_result["throughput"]["tokens_per_second"]
+        throughput_drop = (
+            ((low_tps - high_tps) / low_tps * 100) if low_tps and low_tps > 0 else 0
+        )
+
+        low_cost = low_result["cost"]["cost_usd"] or 0
+        high_cost = high_result["cost"]["cost_usd"] or 0
         cost_increase = ((high_cost - low_cost) / low_cost * 100) if low_cost > 0 else 0
 
         degradation = {
             "throughput_drop_pct": throughput_drop,
             "cost_increase_pct": cost_increase,
         }
-    else:
-        degradation = None
 
     return {
         "by_utilization": results,

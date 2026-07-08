@@ -10,7 +10,7 @@ from blueberry.providers import GeminiProvider, OpenAISpec
 async def main():
     config = load_config("blueberry_config.yaml")
 
-    # Method 1: Use from_config() helper
+
     gemini_flash = GeminiProvider.from_config(
         config, "gemini-1.5-flash", api_key="your-gemini-key"
     )
@@ -19,7 +19,7 @@ async def main():
         config, "gemini-1.5-pro", api_key="your-gemini-key"
     )
 
-    # Method 2: Manual configuration
+
     from blueberry.config import get_model_config
 
     gpt4_config = get_model_config(config, "openai", "gpt-4")
@@ -33,7 +33,7 @@ async def main():
         output_cost_per_million=gpt4_config.output_cost_per_million,
     )
 
-    # Now use providers normally
+
     prompt = "Explain quantum computing in one sentence"
 
     print("=== Testing Gemini Flash ===")
@@ -48,7 +48,7 @@ async def main():
     print(f"Latency: {latency['mean_ms']:.2f}ms")
     print(f"Cost: ${cost['cost_usd']:.6f}")
 
-    # Clean up
+
     await gemini_flash.close()
     await gemini_pro.close()
     await gpt4.close()

@@ -11,11 +11,10 @@ def get_tiktoken_tokenizer(model: str = "gpt-4"):
     """
     try:
         import tiktoken
-        # Try to get exact encoding for the model
+
         try:
             return tiktoken.encoding_for_model(model)
         except KeyError:
-            # Fall back to cl100k_base (GPT-4, GPT-3.5-turbo default)
             return tiktoken.get_encoding("cl100k_base")
     except ImportError:
         return None

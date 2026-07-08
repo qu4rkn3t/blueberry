@@ -23,20 +23,20 @@ async def main():
     print("USING STANDARD TESTS")
     print("=" * 60)
 
-    # 1. Quick performance profile
+
     print("\n1. Performance Profile")
     profile = await performance_profile(provider, "Count from 1 to 10")
     print(f"   Latency: {profile['summary']['avg_latency_ms']:.2f}ms")
     print(f"   Throughput: {profile['summary']['tokens_per_second']:.1f} tok/s")
 
-    # 2. Cost efficiency
+
     print("\n2. Cost Efficiency")
     efficiency = await cost_efficiency(provider, "Explain quantum computing")
     print(f"   Cost: ${efficiency['cost_usd']:.6f}")
     print(f"   Cost per ms: ${efficiency['efficiency']['cost_per_ms']:.8f}")
     print(f"   Tokens per dollar: {efficiency['efficiency']['tokens_per_dollar']:.0f}")
 
-    # 3. Quality check
+
     print("\n3. Quality Check")
     quality = await quality_check(
         provider,
@@ -47,20 +47,20 @@ async def main():
     print(f"   Quality score: {quality['quality_score']:.1f}%")
     print(f"   Consistency: {quality['consistency']['consistency_rate']:.1f}%")
 
-    # 4. Reliability score
+
     print("\n4. Reliability Score")
     reliability = await reliability_score(provider, "What is 2+2?", runs=5)
     print(f"   Reliability: {reliability['reliability']['score']:.1f}%")
     print(f"   Latency CV: {reliability['reliability']['latency_cv']:.3f}")
 
-    # 5. Context capacity
+
     print("\n5. Context Capacity")
     capacity = await context_capacity(provider, max_attempts=10)
     print(f"   Theoretical: {capacity['theoretical_max']:,} tokens")
     print(f"   Actual: {capacity['actual_max']:,} tokens")
     print(f"   Utilization: {capacity['utilization_rate']:.1f}%")
 
-    # 6. Benchmark suite
+
     print("\n6. Benchmark Suite")
     suite = await benchmark_suite(
         provider,

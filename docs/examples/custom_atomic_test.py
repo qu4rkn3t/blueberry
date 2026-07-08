@@ -37,7 +37,7 @@ async def reliability_test(provider, prompt):
     consistency = await check_consistency(provider, prompt, runs=5)
     latency = await measure_latency(provider, prompt, runs=10)
 
-    # High reliability = high consistency + low latency variance
+
     consistency_score = consistency["consistency_rate"]
     latency_cv = latency["std_ms"] / latency["mean_ms"] if latency["mean_ms"] > 0 else 1
     reliability_score = consistency_score * (1 - min(latency_cv, 1))
@@ -57,7 +57,7 @@ async def main():
 
     prompt = load_prompt("What is 2+2? Answer with only the number.")
 
-    # Run custom tests
+
     print("Running cost efficiency test...")
     efficiency = await cost_per_ms_test(provider, prompt)
     print(f"  Efficiency score: {efficiency['efficiency_score']:.2f}")

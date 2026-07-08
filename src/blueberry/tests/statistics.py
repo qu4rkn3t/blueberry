@@ -50,7 +50,6 @@ async def latency_percentiles(
         elapsed = (time.perf_counter() - start) * 1000
         latencies.append(elapsed)
 
-    # Sort for percentile calculation
     latencies.sort()
 
     def get_percentile(data: list[float], p: float) -> float:
@@ -72,7 +71,7 @@ async def latency_percentiles(
     }
 
     for p in percentiles:
-        key = f"p{str(p).replace('.', '')}"  # p99.9 -> p999
+        key = f"p{str(p).replace('.', '')}"
         result[key] = get_percentile(latencies, p)
 
     return result
@@ -155,12 +154,10 @@ async def statistical_comparison(
         u2 = n1 * n2 - u1
         u = min(u1, u2)
 
-        # Normal approximation for p-value
         mu = n1 * n2 / 2
         sigma = ((n1 * n2 * (n1 + n2 + 1)) / 12) ** 0.5
         z = abs((u - mu) / sigma) if sigma > 0 else 0
 
-        # Two-tailed p-value approximation (standard normal)
         p_value = 2 * (1 - _norm_cdf(z))
 
         return u, min(p_value, 1.0)
@@ -171,7 +168,7 @@ async def statistical_comparison(
 
     def _erf(x: float) -> float:
         """Approximation of error function."""
-        # Abramowitz and Stegun approximation
+
         a1, a2, a3, a4, a5 = (
             0.254829592,
             -0.284496736,
@@ -195,7 +192,7 @@ async def statistical_comparison(
     is_significant = p_value < alpha
 
     difference = mean_a - mean_b
-    if abs(difference) < 0.01:  # Within 0.01ms
+    if abs(difference) < 0.01:
         faster = "tie"
     else:
         faster = "b" if difference > 0 else "a"

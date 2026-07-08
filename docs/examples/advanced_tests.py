@@ -7,9 +7,9 @@ from blueberry.tests import compare_models, error_rate, streaming_performance
 
 
 async def main():
-    api_key = "your-api-key"  # Or use os.getenv("GEMINI_API_KEY")
+    api_key = "your-api-key"
 
-    # 1. Streaming performance - TTFT is critical for UX
+
     print("Testing streaming performance...")
     provider = GeminiProvider(model="gemini-1.5-flash", api_key=api_key)
 
@@ -23,7 +23,7 @@ async def main():
         f"  Throughput:          {streaming['summary']['tokens_per_second']:.2f} tok/s"
     )
 
-    # 2. Error rate - reliability under load
+
     print("\n\nTesting reliability...")
     reliability = await error_rate(
         provider, "Hello world", attempts=20, timeout_seconds=10.0
@@ -42,7 +42,7 @@ async def main():
             count = reliability["errors"].count(error)
             print(f"    - {error} ({count}x)")
 
-    # 3. Model comparison - compare multiple models at once
+
     print("\n\nComparing models...")
 
     providers = {
@@ -63,7 +63,7 @@ async def main():
         cost = result["summary"].get("cost_usd", 0)
         print(f"{name:<15} {latency:>8.2f}ms    ${cost:.6f}")
 
-    # Cleanup
+
     await provider.close()
     for p in providers.values():
         await p.close()

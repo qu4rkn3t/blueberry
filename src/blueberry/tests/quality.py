@@ -2,7 +2,11 @@
 
 from typing import Any
 
-from blueberry.atomic import check_consistency, check_instruction_following, measure_latency
+from blueberry.atomic import (
+    check_consistency,
+    check_instruction_following,
+    measure_latency,
+)
 from blueberry.core.provider import Provider
 
 
@@ -42,10 +46,9 @@ async def quality_check(
             provider, prompt, expected_keyword, max_tokens=max_tokens, **kwargs
         )
 
-    # Quality score: consistency rate + instruction following bonus
     quality_score = consistency["consistency_rate"]
     if instruction and instruction["follows_instruction"]:
-        quality_score = min(100, quality_score + 20)  # Bonus for following instructions
+        quality_score = min(100, quality_score + 20)
 
     return {
         "consistency": consistency,
@@ -91,11 +94,8 @@ async def reliability_score(
         provider, prompt, max_tokens=max_tokens, runs=runs, **kwargs
     )
 
-    # Coefficient of variation for latency
     latency_cv = latency["std_ms"] / latency["mean_ms"] if latency["mean_ms"] > 0 else 1
 
-    # Reliability score: high consistency + low latency variance
-    # CV capped at 1 for scoring
     score = consistency["consistency_rate"] * (1 - min(latency_cv, 1))
 
     return {

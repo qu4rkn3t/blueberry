@@ -9,12 +9,12 @@ from blueberry.providers import GeminiProvider
 async def main():
     provider = GeminiProvider(
         model="gemini-1.5-flash",
-        api_key="your-api-key",  # Or use os.getenv("GEMINI_API_KEY")
+        api_key="your-api-key",
     )
 
     prompt = "Count from 1 to 10"
 
-    # Measure latency - simple function call
+
     result = await measure_latency(provider, prompt, runs=5)
 
     print(f"Average latency: {result['mean_ms']:.2f}ms")

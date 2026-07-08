@@ -38,7 +38,7 @@ async def measure_latency(
         await provider.complete(
             CompletionRequest(prompt=prompt, max_tokens=max_tokens, **kwargs)
         )
-        elapsed = (time.perf_counter() - start) * 1000  # Convert to ms
+        elapsed = (time.perf_counter() - start) * 1000
         latencies.append(elapsed)
 
     mean = sum(latencies) / len(latencies)
@@ -69,16 +69,15 @@ async def measure_ttft(
         Time to first token in milliseconds
     """
     start = time.perf_counter()
-    stream = provider.stream(
+    stream = await provider.stream(
         CompletionRequest(prompt=prompt, max_tokens=max_tokens, stream=True, **kwargs)
     )
 
-    # Get first chunk
     async for _ in stream:
         ttft = (time.perf_counter() - start) * 1000
-        # Consume rest of stream
+
         async for _ in stream:
             pass
         return ttft
 
-    return 0.0  # No chunks received
+    return 0.0
